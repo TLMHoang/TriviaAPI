@@ -73,6 +73,8 @@ You will need to provide detailed documentation of your API endpoints including 
 
 ### Documentation Example
 
+End point 
+
 `GET '/api/v1.0/categories'`
 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -89,6 +91,170 @@ You will need to provide detailed documentation of your API endpoints including 
   "6": "Sports"
 }
 ```
+
+`GET /questions`
+
+- Description:
+  - Retrieves a paginated list of questions along with category information.
+- Request Arguments: page (optional): The page number (default is 1). Used for pagination.
+- Response:
+```json
+{
+  "success": true,
+  "questions": [ 
+    {
+      "id": 1,
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "category": "Geography",
+      "difficulty": 2 
+    }
+  ],
+  "total_questions": 100,  
+  "current_questions": 10, 
+  "categories": [
+    {"id": 1, "type": "Science"},
+    {"id": 2, "type": "Art"},
+  ],
+  "current_category": null 
+}
+```
+
+`DELETE /questions/<int:question_id>`
+
+- Description: Deletes a specific question by its ID.
+- Request Arguments
+  - question_id (required, int): The ID of the question to be deleted.
+- Response
+```json
+{
+  "success": true,
+  "deleted": 1  // The ID of the deleted question
+}
+```
+
+`POST /questions`
+
+- Description: Creates a new question.
+- Request Body
+  - question (required, string): The text of the question.
+  - answer (required, string): The answer to the question.
+  - category (required, int): The ID of the category the question belongs to.
+  - difficulty (required, int): The difficulty level of the question (1-5).
+```json
+{
+  "question": "What is the capital of France?",
+  "answer": "Paris",
+  "category": "Geography",
+  "difficulty": 2 
+}
+```
+- Respone:
+```json
+{
+  "success": true,
+  "created": 15  // The ID of the newly created question
+}
+```
+
+`POST /questions/search`
+
+- Description: earches for questions based on a search term and returns paginated results.
+- Request Body:
+  - searchTerm (string): The term to search for within the question text (case-insensitive).
+```json
+{
+  "searchTerm": "capital"  
+}
+```
+- Response:
+```json
+{
+  "success": true,
+  "questions": [ 
+    {
+      "id": 1,
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "category": "Geography",
+      "difficulty": 2 
+    }, 
+  ],
+  "total_questions": 5,  
+  "current_questions": 5,
+  "categories": [
+    {"id": 1, "type": "Science"},
+    {"id": 2, "type": "Art"},
+  ],
+  "current_category": null 
+}
+```
+
+`GET /categories/<int:category_id>/questions`
+
+- Description: Retrieves a paginated list of questions belonging to a specific category.
+- Request Arguments
+  - category_id (required, int): The ID of the category to filter questions by.
+  - page (optional, int): The page number (default is 1). Used for pagination.
+- Response:
+```json
+{
+  "success": true,
+  "questions": [ 
+    {
+      "id": 3,
+      "question": "What is the highest mountain in the world?",
+      "answer": "Mount Everest",
+      "category": "Geography", 
+      "difficulty": 3
+    }, 
+    
+  ],
+  "total_questions": 15, 
+  "current_questions": 10,
+  "categories": [
+    {"id": 1, "type": "Science"},
+    {"id": 2, "type": "Art"},
+  ],
+  "current_category": "Geography"
+}
+```
+
+`POST /quizzes`
+
+- Description: Retrieves a random question for a quiz, optionally filtered by category and excluding previously asked questions.
+
+- Request Body:
+  - quiz_category (optional, object): An object containing the id of the category to filter by. If not provided or if the ID is 0, questions from all categories will be considered.
+  - previous_questions (optional, array of integers): An array of question IDs that have already been asked in the quiz.
+
+```json
+{
+  "quiz_category": {"id": 3}, 
+  "previous_questions": [5, 12, 21]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "question": {
+    "id": 25,
+    "question": "What is the highest mountain in the world?",
+    "answer": "Mount Everest",
+    "category": "Geography", 
+    "difficulty": 3
+  }
+}
+```
+Or
+```json
+{
+  "success": true,
+  "question": null  
+}
+```
+
 
 ## Testing
 

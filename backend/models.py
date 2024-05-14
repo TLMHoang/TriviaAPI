@@ -4,15 +4,35 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 database_name = 'trivia'
-database_path = 'postgresql://{}/{}'.format('postgres:123qwe@localhost:5432', database_name)
 
 db = SQLAlchemy()
+
+DB_USER = ''
+DB_NAME = ''
+DB_PASSWORD = ''
+DB_SERVICE_NAME = ''
+
+def init_env():
+    global DB_USER
+    DB_USER = os.getenv('DB_USER')
+    global DB_PASSWORD
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    global DB_NAME
+    DB_NAME = os.getenv('DB_NAME')
+    global DB_SERVICE_NAME
+    DB_SERVICE_NAME = os.getenv('DB_SERVICE_NAME')
+
+def set_database_path():
+    return 'postgresql://{}:{}@{}/{}'.format(DB_USER, DB_PASSWORD, DB_SERVICE_NAME, DB_NAME)
 
 """
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
-def setup_db(app, database_path=database_path):
+def setup_db(app, database_path=None):
+    init_env()
+    if database_path == None:
+        database_path = set_database_path()
     with app.app_context():
         app.config["SQLALCHEMY_DATABASE_URI"] = database_path
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

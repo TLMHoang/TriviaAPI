@@ -5,6 +5,14 @@ from flask_cors import CORS, cross_origin
 import random
 
 from models import setup_db, Question, Category
+from dotenv import load_dotenv
+
+
+path = os.path.abspath(os.path.dirname(__file__))
+
+os.chdir(path)
+
+load_dotenv()
 
 QUESTIONS_PER_PAGE = 10
 
@@ -14,6 +22,7 @@ def create_app():
     # if test_config is None:
         # setup_db(app)
     # else:
+
     setup_db(app)
 
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -34,6 +43,9 @@ def create_app():
     @cross_origin()
     def get_categories():
         categories = Category.query.order_by(Category.id).all()
+
+        if len(categories) <= 0:
+            abort(404)
 
         # Format the data to send back
         formatted_categories = {category.id: category.type for category in categories}

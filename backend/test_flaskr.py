@@ -61,7 +61,8 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-
+#Question
+    # API get Question with pages
     def testcase_get_questions_by_page(self):
         res = self.client().get('/questions')
         data = json.loads(res.data)
@@ -80,6 +81,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], "Resource not found")
 
+    #delete question
     def test_delete_question(self):
         res = self.client().delete('/questions/7')
         data = json.loads(res.data)
@@ -96,6 +98,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Unprocessable entity')
 
+    #Create Question
     def test_add_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
@@ -104,7 +107,22 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['created'])
 
+    def test_failure_add_question(self):
+        request = {
+            "question": "How are you?", 
+            "answer": "Fine", 
+            "category": "1", 
 
+        }
+        res = self.client().post('/questions', json=request)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable entity')
+
+
+    #Search Question
     def test_get_question_search_with_results(self):
         res = self.client().post('/questions/search', json={"searchTerm": "How"})
         data = json.loads(res.data)
@@ -131,6 +149,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['categories'])
+    
+    def test_404_get_categories_table_null(self):
+        res = self.client().get('/categories')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Resource not found')
 
     def test_get_question_by_category(self):
         res = self.client().get('/categories/1/questions')
